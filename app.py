@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key'  # Change this!
+app.config['SECRET_KEY'] = 'your-secret-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///catering.db'
-db = SQLAlchemy(app)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -15,7 +17,9 @@ login_manager.login_view = 'login'
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    role = db.Column(db.String(20), nullable=False, default='customer')
 
 class MenuItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,7 +32,47 @@ class MenuItem(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Routes
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists')
+            return redirect(url_for('register'))
+            
+        if User.query.filter_by(email=email).first():
+            flash('Email already registered')
+            return redirect(url_for('register'))
+        
+        hashed_password = generate_password_hash(password)
+        new_user = User(username=username, email=email, password=hashed_password, role='customer')
+        db.session.add(new_user)
+        db.session.commit()
+        
+        flash('Registration successful! Please login.')
+        return redirect(url_for('login'))
+    
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username).first()
+        
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            flash('Logged in successfully!')
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid username or password')
+    
+    return render_template('login.html')
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -38,25 +82,36 @@ def menu():
     items = MenuItem.query.all()
     return render_template('menu.html', items=items)
 
-@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/admin')
 @login_required
 def admin():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        description = request.form.get('description')
-        price = float(request.form.get('price'))
-        category = request.form.get('category')
-
-        new_item = MenuItem(name=name, description=description, price=price, category=category)
-        db.session.add(new_item)
-        db.session.commit()
-        flash('Menu item added successfully!')
-        return redirect(url_for('admin'))
-
+    if not current_user.role == 'admin':
+        flash('Access denied. Admin privileges required.')
+        return redirect(url_for('index'))
     items = MenuItem.query.all()
     return render_template('admin.html', items=items)
 
-if __name__ == '__main__':
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out successfully!')
+    return redirect(url_for('index'))
+
+def init_db():
     with app.app_context():
         db.create_all()
+        # Create admin user if not exists
+        if not User.query.filter_by(role='admin').first():
+            admin = User(
+                username='admin',
+                email='admin@example.com',
+                password=generate_password_hash('admin123'),
+                role='admin'
+            )
+            db.session.add(admin)
+            db.session.commit()
+
+if __name__ == '__main__':
+    init_db()
     app.run(debug=True)
