@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin">
+    <h1>Admin Panel</h1>
+    <form method="POST" class="add-item-form">
+        <h2>Add New Menu Item</h2>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <option value="Appetizers">Appetizers</option>
+                <option value="Main Course">Main Course</option>
+                <option value="Desserts">Desserts</option>
+            </select>
+        </div>
+        <button type="submit" class="btn">Add Item</button>
+    </form>
+</div>
+{% endblock %}

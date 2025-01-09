@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="menu">
+    <h1>Our Menu</h1>
+    {% for category in ['Appetizers', 'Main Course', 'Desserts'] %}
+    <h2>{{ category }}</h2>
+    <div class="menu-items">
+        {% for item in items if item.category == category %}
+        <div class="menu-item">
+            <h3>{{ item.name }}</h3>
+            <p>{{ item.description }}</p>
+            <p class="price">${{ "%.2f"|format(item.price) }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
