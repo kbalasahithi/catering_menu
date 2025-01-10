@@ -3,32 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catering Menu App</title>
+    <title>Friends Caters</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('index') }}">Home</a></li>
-            <li><a href="{{ url_for('menu') }}">Menu</a></li>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            Friends Caters
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}" class="nav-item">
+                🏠 Home
+            </a>
+            <a href="{{ url_for('menu') }}" class="nav-item">
+                🍽️ Menu
+            </a>
             {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('admin') }}">Admin</a></li>
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            <a href="{{ url_for('logout') }}" class="nav-item">
+                👤 Logout
+            </a>
             {% else %}
-            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <a href="{{ url_for('login') }}" class="nav-item">
+                👤 Login
+            </a>
             {% endif %}
-        </ul>
+        </div>
     </nav>
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="flash-message">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </div>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
 </body>
 </html>

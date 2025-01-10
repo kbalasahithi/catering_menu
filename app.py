@@ -111,7 +111,59 @@ def init_db():
             )
             db.session.add(admin)
             db.session.commit()
+def init_menu_items():
+    with app.app_context():
+        # Only add items if menu is empty
+        if MenuItem.query.count() == 0:
+            menu_items = [
+                # Appetizers
+                MenuItem(
+                    name="Chicken 65",
+                    description="Spicy, deep-fried chicken marinated in authentic Indian spices, served with mint chutney",
+                    price=12.99,
+                    category="Appetizers"
+                ),
+                MenuItem(
+                    name="Goat Fry",
+                    description="Tender pieces of goat marinated and fried with aromatic Indian spices",
+                    price=15.99,
+                    category="Appetizers"
+                ),
+                
+                # Main Course
+                MenuItem(
+                    name="Special Biryani",
+                    description="Fragrant basmati rice cooked with tender meat, aromatic spices, and fresh herbs",
+                    price=18.99,
+                    category="Main Course"
+                ),
+                MenuItem(
+                    name="Traditional Thali",
+                    description="Complete Indian meal with rice, dal, curry, vegetables, roti, and accompaniments",
+                    price=16.99,
+                    category="Main Course"
+                ),
+                
+                # Desserts
+                MenuItem(
+                    name="Gulab Jamun",
+                    description="Soft milk-solid dumplings soaked in rose and cardamom flavored sugar syrup",
+                    price=6.99,
+                    category="Desserts"
+                ),
+                MenuItem(
+                    name="Special Ice Cream",
+                    description="Choice of Indian flavors including mango, pistachio, and saffron",
+                    price=5.99,
+                    category="Desserts"
+                )
+            ]
+            
+            for item in menu_items:
+                db.session.add(item)
+            db.session.commit()
 
 if __name__ == '__main__':
     init_db()
+    init_menu_items() 
     app.run(debug=True)

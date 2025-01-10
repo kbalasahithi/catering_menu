@@ -1,8 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="welcome">
-    <h1>Welcome to Our Catering Service</h1>
-    <p>Discover our delicious menu options for your next event!</p>
-    <a href="{{ url_for('menu') }}" class="btn">View Menu</a>
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Friends Caters</h1>
+        <p class="tagline">Where You Can Enjoy Endless Authentic Tastes</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('menu') }}" class="btn btn-primary">Explore Menu</a>
+            <a href="{{ url_for('register') }}" class="btn btn-secondary">Join Us</a>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <div class="feature-section">
+        <div class="feature-item">
+            <span class="feature-icon">⭐</span>
+            <h3>Authentic Flavors</h3>
+            <p>Experience the rich taste of traditional recipes prepared with love</p>
+        </div>
+        
+        <div class="feature-item">
+            <span class="feature-icon">👨‍🍳</span>
+            <h3>Expert Chefs</h3>
+            <p>Our master chefs bring years of culinary expertise to your plate</p>
+        </div>
+        
+        <div class="feature-item">
+            <span class="feature-icon">🎉</span>
+            <h3>Perfect Events</h3>
+            <p>From intimate gatherings to grand celebrations, we cater to all</p>
+        </div>
+    </div>
+
+    <div class="specialties-section">
+        <h2>Our Specialties</h2>
+        <div class="specialty-items">
+            <div class="specialty-item">
+                <h3>Special Biryani</h3>
+                <p>Aromatic rice layered with tender meat and secret spices</p>
+            </div>
+            
+            <div class="specialty-item">
+                <h3>Traditional Thali</h3>
+                <p>A complete Indian feast with multiple delicacies</p>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
